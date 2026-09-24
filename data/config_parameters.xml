@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!--
+        AI is OFF by default. To enable the summary + keywords pass, set your
+        API key here (Settings > Technical > System Parameters):
+            ai_document.anthropic_api_key = <your key>
+        Optionally override the model:
+            ai_document.anthropic_model   = claude-haiku-4-5-20251001
+        NOTE: requires the Odoo server to have outbound internet access.
+    -->
+    <record id="param_anthropic_model" model="ir.config_parameter">
+        <field name="key">ai_document.anthropic_model</field>
+        <field name="value">claude-haiku-4-5-20251001</field>
+    </record>
+</odoo>

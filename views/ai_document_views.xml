@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============ FORM ============ -->
+    <record id="view_ai_document_form" model="ir.ui.view">
+        <field name="name">ai.document.form</field>
+        <field name="model">ai.document</field>
+        <field name="arch" type="xml">
+            <form string="Document">
+                <header>
+                    <button name="action_process" type="object"
+                            string="Process / Re-process"
+                            class="btn-primary"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,processed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Document title..."/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="file" filename="filename"/>
+                            <field name="filename" invisible="1"/>
+                            <field name="file_type" readonly="1"/>
+                            <field name="language"/>
+                        </group>
+                        <group>
+                            <field name="char_count" readonly="1"/>
+                            <field name="keywords" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="AI Summary" name="summary">
+                            <field name="summary" readonly="1"
+                                   placeholder="Set an API key to enable AI summaries..."/>
+                        </page>
+                        <page string="Extracted Text" name="extracted_text">
+                            <field name="extracted_text"
+                                   placeholder="Text extracted from the file will appear here after processing..."/>
+                        </page>
+                        <page string="Processing Log" name="log">
+                            <field name="processing_log" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============ LIST ============ -->
+    <record id="view_ai_document_tree" model="ir.ui.view">
+        <field name="name">ai.document.list</field>
+        <field name="model">ai.document</field>
+        <field name="arch" type="xml">
+            <list string="Documents">
+                <field name="name"/>
+                <field name="file_type"/>
+                <field name="char_count"/>
+                <field name="keywords" optional="show"/>
+                <field name="state"
+                       decoration-success="state == 'processed'"
+                       decoration-danger="state == 'error'"
+                       decoration-muted="state == 'draft'"
+                       widget="badge"/>
+                <field name="create_date" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============ SEARCH ============ -->
+    <record id="view_ai_document_search" model="ir.ui.view">
+        <field name="name">ai.document.search</field>
+        <field name="model">ai.document</field>
+        <field name="arch" type="xml">
+            <search string="Search Documents">
+                <field name="name" string="Search (title + full text)"
+                       filter_domain="['|', '|', ('name', 'ilike', self), ('extracted_text', 'ilike', self), ('keywords', 'ilike', self)]"/>
+                <field name="extracted_text" string="Text only"/>
+                <field name="keywords"/>
+                <separator/>
+                <filter name="processed" string="Processed"
+                        domain="[('state', '=', 'processed')]"/>
+                <filter name="draft" string="Draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="has_error" string="Errors"
+                        domain="[('state', '=', 'error')]"/>
+                <group>
+                    <filter name="group_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_type" string="File Type"
+                            context="{'group_by': 'file_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============ ACTION ============ -->
+    <record id="action_ai_document" model="ir.actions.act_window">
+        <field name="name">Documents</field>
+        <field name="res_model">ai.document</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ai_document_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Upload your first Georgian Word or PDF document
+            </p>
+            <p>
+                The text will be extracted automatically and become searchable
+                from the search bar above.
+            </p>
+        </field>
+    </record>
+
+    <!-- ============ MENUS ============ -->
+    <menuitem id="menu_ai_document_root"
+              name="AI Documents"
+              sequence="90"/>
+    <menuitem id="menu_ai_document_main"
+              name="Documents"
+              parent="menu_ai_document_root"
+              action="action_ai_document"
+              sequence="10"/>
+
+</odoo>

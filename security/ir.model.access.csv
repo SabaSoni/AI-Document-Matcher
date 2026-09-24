@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ai_document_user,ai.document.user,model_ai_document,base.group_user,1,1,1,0
+access_ai_document_manager,ai.document.manager,model_ai_document,base.group_system,1,1,1,1
